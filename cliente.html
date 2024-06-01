@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Información del Cliente</title>
+  <style>
+    body {
+      background-image: url('./img/fndo.jpg'); /* URL de tu imagen de fondo */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .container {
+      padding-top: 5rem; /* Para evitar que el contenido se superponga con la barra de navegación fija */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Barra de navegación superior -->
+  <nav class="top-nav p-4">
+    <ul class="flex space-x-4 justify-center">
+      <li><a href="cliente.html" class="text-blue-600 hover:text-blue-800">Cliente</a></li>
+      <li><a href="admin.html" class="text-blue-600 hover:text-blue-800">Admin</a></li>
+    </ul>
+  </nav>
+
+  <div class="container mx-auto p-6">
+    <h1 class="text-4xl font-bold mb-6 text-center text-white">Información del Cliente</h1>
+    
+    <!-- Información del Cliente -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4 text-white">Nombre del Cliente</h2>
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p class="text-xl font-semibold">Nombre: <span id="clientName" class="text-gray-700">Juan Pérez</span></p>
+        <p class="text-xl font-semibold">Email: <span id="clientEmail" class="text-gray-700">juan.perez@example.com</span></p>
+        <p class="text-xl font-semibold">Teléfono: <span id="clientPhone" class="text-gray-700">123-456-7890</span></p>
+      </div>
+    </section>
+
+    <!-- Vehículos del Cliente -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-semibold mb-4 text-white">Vehículos en Propiedad</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-lg rounded-lg">
+          <thead>
+            <tr class="bg-blue-600 text-white">
+              <th class="py-3 px-4 border-b">Marca</th>
+              <th class="py-3 px-4 border-b">Modelo</th>
+              <th class="py-3 px-4 border-b">Año</th>
+              <th class="py-3 px-4 border-b">VIN</th>
+              <th class="py-3 px-4 border-b">Placa</th>
+              <th class="py-3 px-4 border-b">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="vehiclesTable">
+            <!-- Aquí se llenarán los datos de los vehículos -->
+            <tr>
+              <td class="py-3 px-4 border-b">Toyota</td>
+              <td class="py-3 px-4 border-b">Corolla</td>
+              <td class="py-3 px-4 border-b">2020</td>
+              <td class="py-3 px-4 border-b">1HGBH41JXMN109186</td>
+              <td class="py-3 px-4 border-b">ABC-123</td>
+              <td class="py-3 px-4 border-b"><button onclick="showServices('1HGBH41JXMN109186')" class="text-blue-600 hover:text-blue-800">Ver Servicios</button></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 border-b">Ford</td>
+              <td class="py-3 px-4 border-b">Focus</td>
+              <td class="py-3 px-4 border-b">2018</td>
+              <td class="py-3 px-4 border-b">1HGCM82633A123456</td>
+              <td class="py-3 px-4 border-b">XYZ-789</td>
+              <td class="py-3 px-4 border-b"><button onclick="showServices('1HGCM82633A123456')" class="text-blue-600 hover:text-blue-800">Ver Servicios</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Servicios del Vehículo -->
+    <section id="servicesSection" class="hidden mb-12">
+      <h2 class="text-3xl font-semibold mb-4 text-white">Servicios del Vehículo</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white shadow-lg rounded-lg">
+          <thead>
+            <tr class="bg-blue-600 text-white">
+              <th class="py-3 px-4 border-b">Fecha</th>
+              <th class="py-3 px-4 border-b">Descripción</th>
+              <th class="py-3 px-4 border-b">Costo</th>
+            </tr>
+          </thead>
+          <tbody id="servicesTable">
+            <!-- Aquí se llenarán los datos de los servicios -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function showServices(vin) {
+      // Mostrar la sección de servicios
+      document.getElementById('servicesSection').classList.remove('hidden');
+
+      // Obtener los servicios del vehículo según el VIN (esto puede ser una llamada a la API)
+      const services = getVehicleServices(vin);
+      const servicesTable = document.getElementById('servicesTable');
+      servicesTable.innerHTML = '';
+
+      services.forEach(service => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="py-3 px-4 border-b">${service.date}</td>
+          <td class="py-3 px-4 border-b">${service.description}</td>
+          <td class="py-3 px-4 border-b">${service.cost}</td>
+        `;
+        servicesTable.appendChild(row);
+      });
+    }
+
+    // Función ficticia para obtener los servicios del vehículo
+    function getVehicleServices(vin) {
+      // Aquí iría el código para obtener los servicios del vehículo desde una API o base de datos
+      // Este es un ejemplo de datos estáticos
+      const services = {
+        '1HGBH41JXMN109186': [
+          { date: '2023-01-15', description: 'Cambio de aceite', cost: '$50' },
+          { date: '2023-02-20', description: 'Cambio de neumáticos', cost: '$200' },
+        ],
+        '1HGCM82633A123456': [
+          { date: '2023-03-10', description: 'Revisión general', cost: '$100' },
+          { date: '2023-04-18', description: 'Cambio de frenos', cost: '$150' },
+        ],
+      };
+      return services[vin] || [];
+    }
+
+    // Inicialización de los datos del cliente (puede ser reemplazada por una llamada a la API)
+    document.addEventListener('DOMContentLoaded', function() {
+      const clientData = getClientData();
+      document.getElementById('clientName').innerText = clientData.name;
+      document.getElementById('clientEmail').innerText = clientData.email;
+      document.getElementById('clientPhone').innerText = clientData.phone;
+    });
+
+    function getClientData() {
+      return {
+        name: 'Juan Pérez',
+        email: 'juan.perez@example.com',
+        phone: '123-456-7890'
+      };
+    }
+  </script>
+
+</body>
+</html>
